@@ -1,5 +1,5 @@
 from django.urls import path
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth.views import LogoutView, LoginView
 from apps import views
 from .views import contact, materiales, search_email, register, login, rate_website, search_ratings
 

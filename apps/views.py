@@ -37,10 +37,8 @@ def login(request):
                 form.add_error(None, 'Nombre de usuario o contraseña inválidos')
     return render(request, 'apps/login.html', {'form': form})
 
-@login_required
 def home(request):
-    user_profile, created = Profile.objects.get_or_create(user=request.user)
-    return render(request, 'apps/index.html', {'user_profile': user_profile})
+    return render(request, 'apps/index.html')
 
 def contact(request):
     if request.method == 'POST':
@@ -106,6 +104,10 @@ def register(request):
         form = RegisterForm()
 
     return render(request, 'apps/register.html', {'form': form})
+
+# @login_required
+# user_profile, created = Profile.objects.get_or_create(user=request.user)
+# return render(request, 'apps/rate.html', {'user_profile': user_profile})
 
 def rate_website(request):
     if request.method == 'POST':
