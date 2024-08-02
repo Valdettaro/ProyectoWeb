@@ -1,7 +1,9 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path
 from django.contrib.auth.views import LogoutView, LoginView
 from apps import views
-from .views import contact, materiales, search_email, register, login, rate_website, search_ratings
+from .views import contact, materiales, search_email, register, login, rate_website, search_ratings, edit_profile
 
 
 urlpatterns = [
@@ -18,4 +20,5 @@ urlpatterns = [
     path('materiales/', materiales, name='materiales'), #
     path('search-email/', search_email, name='search_email'), #
     path('register/', views.register, name='register'), #
-]
+    path('edit_profile/', views.edit_profile, name='edit_profile'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

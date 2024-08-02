@@ -23,19 +23,19 @@
                     <form id="registerForm" method="POST">
                         {% csrf_token %}
                         <div class="form-floating mb-3">
-                            <input class="form-control" id="username" type="text" name="username" placeholder="Nombre de usuario" value="{{ form.username.value }}" required />
+                            <input class="form-control" id="username" type="text" name="username" placeholder="Nombre de usuario" value="" required />
                             <label for="username">Nombre de usuario</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input class="form-control" id="first_name" type="text" name="first_name" placeholder="Nombre" value="{{ form.first_name.value }}" required />
+                            <input class="form-control" id="first_name" type="text" name="first_name" placeholder="Nombre" value="" required />
                             <label for="first_name">Nombre</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input class="form-control" id="last_name" type="text" name="last_name" placeholder="Apellido" value="{{ form.last_name.value }}" required />
+                            <input class="form-control" id="last_name" type="text" name="last_name" placeholder="Apellido" value="" required />
                             <label for="last_name">Apellido</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input class="form-control" id="email" type="email" name="email" placeholder="Correo electrónico" value="{{ form.email.value }}" required />
+                            <input class="form-control" id="email" type="email" name="email" placeholder="Correo electrónico" value="" required />
                             <label for="email">Correo electrónico</label>
                         </div>
                         <div class="form-floating mb-3">

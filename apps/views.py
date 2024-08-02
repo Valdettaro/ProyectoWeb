@@ -2,14 +2,13 @@ from django.db.models import Avg
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from . import views
 from .models import Contact, Materiales, Profile, Rating
-from .forms import ContactForm, MaterialesForm, SearchMaterialForm, SearchEmailForm, RegisterForm, LoginForm, RatingForm, SearchRatingForm
+from .forms import ContactForm, MaterialesForm, SearchMaterialForm, SearchEmailForm, RegisterForm, LoginForm, RatingForm, SearchRatingForm, ProfileForm, UserEditForm, CustomPasswordChangeForm
 
 def home(request):
     return render(request, "apps/index.html")
@@ -105,10 +104,6 @@ def register(request):
 
     return render(request, 'apps/register.html', {'form': form})
 
-# @login_required
-# user_profile, created = Profile.objects.get_or_create(user=request.user)
-# return render(request, 'apps/rate.html', {'user_profile': user_profile})
-
 def rate_website(request):
     if request.method == 'POST':
         form = RatingForm(request.POST)
@@ -139,4 +134,60 @@ def search_ratings(request):
         'ratings': ratings,
         'search_made': search_made,
         'average_rating': average_rating
+    })
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        user_form = UserEditForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        password_form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+
+        if 'update_user' in request.POST:
+            if user_form.is_valid():
+                user_form.save()
+                messages.success(request, 'Tu información de usuario se ha actualizado con éxito!')
+            else:
+                messages.error(request, 'Error al actualizar la información del usuario.')
+
+        if 'update_profile' in request.POST:
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, 'Tu foto de perfil se ha actualizado con éxito!')
+            else:
+                messages.error(request, 'Error al actualizar la foto de perfil.')
+
+        if 'update_password' in request.POST:
+            if password_form.is_valid():
+                user = request.user
+                old_password = password_form.cleaned_data['old_password']
+                new_password1 = password_form.cleaned_data['new_password1']
+                new_password2 = password_form.cleaned_data['new_password2']
+
+                if old_password and new_password1 and new_password2:
+                    if not user.check_password(old_password):
+                        messages.error(request, 'Tu contraseña actual es incorrecta.')
+                    elif new_password1 != new_password2:
+                        messages.error(request, 'Las contraseñas no coinciden.')
+                    else:
+                        user.set_password(new_password1)
+                        user.save()
+                        update_session_auth_hash(request, user)
+                        messages.success(request, 'Tu contraseña se ha actualizado correctamente!')
+                else:
+                    messages.error(request, 'Por favor, completa todos los campos de contraseña.')
+            else:
+                messages.error(request, 'Error al cambiar la contraseña.')
+
+        return redirect('edit_profile')
+
+    else:
+        user_form = UserEditForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+        password_form = CustomPasswordChangeForm(user=request.user)
+
+    return render(request, 'apps/edit_profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'password_form': password_form,
     })

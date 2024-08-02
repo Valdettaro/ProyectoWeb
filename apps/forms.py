@@ -1,7 +1,6 @@
 from django import forms
-from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from .models import Profile, Rating
 
 class ContactForm(forms.Form):
@@ -37,7 +36,7 @@ class LoginForm(forms.Form):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['profile_picture']
+        fields = ('profile_picture',)
 
 class RatingForm(forms.ModelForm):
     class Meta:
@@ -53,3 +52,13 @@ class SearchRatingForm(forms.Form):
         choices=[(i, f'{i} Star{"s" if i > 1 else ""}') for i in range(1, 6)],
         required=True
     )
+
+class UserEditForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
